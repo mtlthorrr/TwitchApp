@@ -9,10 +9,10 @@
     <Grid>
         <DockPanel Height="51" LastChildFill="False" Margin="0,10,2,0" VerticalAlignment="Top">
         	<Menu VerticalAlignment="Top">
-        		<MenuItem Header="Refresh Favorites" Height="41"/>
-        		<MenuItem Header="Edit Favorites"/>
-        		<Button x:Name="btnGetChannels" HorizontalAlignment="Center" VerticalAlignment="Top" Width="116" Command="{Binding RefreshFavoritesCommand}" Content="Refresh Favoites"/>
-        	</Menu>
+                <MenuItem Header="Refresh Favorites" Height="41" Command="{Binding RefreshFavoritesCommand}" />
+                <MenuItem Header="Reload Channel List" Height="41" Command="{Binding ReloadChannelConfigCommand}" />
+                <MenuItem Header="Edit Favorites"/>
+            </Menu>
         </DockPanel>
         <TabControl Margin="0,66,0,0">
         	<TabItem Header="Favorites">
