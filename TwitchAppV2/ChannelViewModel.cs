@@ -27,6 +27,7 @@ namespace TwitchAppV2
         private string _selectedStream;
         private ChannelModel _selectedChannel;
         private string _configFile;
+        private string _settingsFile;
         private XmlAttributeOverrides _overrides = new XmlAttributeOverrides();
         private XmlAttributes _attributesToOverride = new XmlAttributes();
 
@@ -74,8 +75,10 @@ namespace TwitchAppV2
 
             _channels = new ObservableCollection<ChannelModel>();
             string appPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            _configFile = String.Format("{0}\\TwitchAPP.xml", appPath);
+            _configFile = String.Format("{0}\\TwitchApp.xml", appPath);
+            _settingsFile = String.Format("{0}\\Settings.xml", appPath);
             _configFile = @"C:\Users\thorrr\desktop\TwitchApp.xml"; // For dev set the location manually
+            _settingsFile = @"C:\Users\thorrr\desktop\Settings.xml"; // For dev set the location manually
             const string _imgbase64 = "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAkGBwgHBgkICAgKCgkLDhcPDg0NDhwUFREXIh4jIyEeICAlKjUtJScyKCAgLj8vMjc5PDw8JC1CRkE6RjU7PDn/2wBDAQoKCg4MDhsPDxs5JiAmOTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTn/wgARCADIAUADAREAAhEBAxEB/8QAGgABAQEBAQEBAAAAAAAAAAAAAAEGBQMHBP/EABQBAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhADEAAAAPhoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABqDlH0MwpojyMMbYz51T8Z5nEAAAAAAAAAAAAABvjlFOWQ0hlDbHGId85piAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACkAAAAAAAAAAAAAAAAAAAKACFIUgKACFIUEKAQpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//xAAsEAABBAIBAwIEBwEAAAAAAAACAQMEBQYRABITIQcxFEFRgBAiQEJDYHFy/9oACAEBAAE/APvHrMHsptYxYvzKusiyd9gp8wGFe17qKLy7orChtVrbFlGX/CovWigQl7Eheyjy2xnHsRxaHJmQam6mOsI8ZrbkBL1FpOy2GusE5htEOR5FDrTlsRW3XBQzddQFUepE0G/c/onPUuHQUr51dZUQG3QdXUpi0OS5ofGnA9gJeelUOjur9iit6UJay1PUnvuATSC2Rewr+EylOJ6cJKSJSSdyWzObHldclnrHw2Y8xvHrHJZ5watoXZAsm90KWtoPLTALmtgSpbrkB44XmXGYlg69G/7FOUGJ2N7EfnNHDiQGTRs5c18WWuv5BtfnzIsZn0CRnJKxn4srasSoryOsu699En62a7RZTQUIu37FVMrIvwjzMphwt6XaGJAi89QbeBaWcBqreN+JW1zEAXzDo73b/eg8zW2g2cDGmob/AHThVYMP+FToNCLmJy2IGU002UfbjxpzDrp/QBNFXmUy2J+T3EyKfcjyJrzrR/USNVReek79RUZLFvLS6jQwiq4PYNp0jNCaId+B1y2hxoMzsxbFiwa0i95gTEf80YovKgKEcAm072UwGpc59mT5Yf01pPIroOenlxCpLSyfmSOyLlbIYaPz5cIfy8wm2g1sPJWJz/a+NqnGWPCr1u7FRHmB5JSMYZKorJa0JKT/AIxpbOI4/HPYIH8fkS5n90zOrq2BEk0JxWDcNGqqK+zpS15Lufcgn9e//8QAFBEBAAAAAAAAAAAAAAAAAAAAkP/aAAgBAgEBPwB6P//EABQRAQAAAAAAAAAAAAAAAAAAAJD/2gAIAQMBAT8Aej//2Q==";
             byte[] byteBuffer = Convert.FromBase64String(_imgbase64);
             using (MemoryStream _memStream = new MemoryStream(byteBuffer))
@@ -183,7 +186,7 @@ namespace TwitchAppV2
                 return;
             }
 
-            Process.Start(@"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe", SelectedStream);
+            Process.Start(Settings.LaunchStreamCommandList[0], SelectedStream);
         }
 
         private BitmapImage GetChannelPreview(string url)
@@ -234,10 +237,9 @@ namespace TwitchAppV2
             if (File.Exists(_configFile))
             {
                 XmlSerializer deserializer = new XmlSerializer(typeof(ObservableCollection<ChannelModel>), _overrides, null, new XmlRootAttribute("Channels"), null);
+                //XmlSerializer settingsDeserializer = new XmlSerializer(typeof(Settings), overrides, null, new XmlRootAttribute("Channels"), null);
                 using (TextReader textReader = new StreamReader(_configFile))
-
-                    //XmlSerializer settingsDeserializer = new XmlSerializer(typeof(Settings), overrides, null, new XmlRootAttribute("Channels"), null);
-
+                {
                     try
                     {
                         _channels.Clear();
@@ -246,13 +248,13 @@ namespace TwitchAppV2
                         {
                             _channels.Add(channel);
                         }
-                        //Settings = (Settings)settingsDeserializer.Deserialize(textReader);
                     }
 
                     catch (InvalidOperationException ex)
                     {
                         MessageBox.Show(String.Format("Error parsing config file: {0}", ex.InnerException));
                     }
+                }
 
                 foreach (ChannelModel channel in _channels)
                 {
@@ -268,6 +270,28 @@ namespace TwitchAppV2
                 TextWriter textWriter = new StreamWriter(_configFile);
                 serializer.Serialize(textWriter, _channels);
                 textWriter.Close();
+            }
+
+            if (File.Exists(_settingsFile))
+            {
+                XmlSerializer deserializer = new XmlSerializer(typeof(Settings), _overrides, null, new XmlRootAttribute("Settings"), null);
+                using (TextReader textReader = new StreamReader(_settingsFile))
+                {
+                    try
+                    {
+                        Settings = (Settings)deserializer.Deserialize(textReader);
+                    }
+
+                    catch (InvalidOperationException ex)
+                    {
+                        MessageBox.Show(String.Format("Error parsing Settings file: {0}", ex.InnerException));
+                    }
+                }
+            }
+
+            else
+            {
+                Settings.LaunchStreamCommandList[0] = @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe";
             }
         }
     }
