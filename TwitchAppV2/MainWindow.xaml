@@ -20,7 +20,7 @@
         			<Grid.ColumnDefinitions>
         				<ColumnDefinition/>
         			</Grid.ColumnDefinitions>
-        			<ListBox x:Name="FavoritesList" ItemsSource="{Binding _channels}" SelectedItem="{Binding SelectedChannel}">
+        			<ListBox x:Name="FavoritesList" ItemsSource="{Binding _channels}" SelectedItem="{Binding SelectedChannel}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
         				<ListBox.ItemTemplate>
         					<DataTemplate>
         						<StackPanel Orientation="Vertical">
@@ -36,9 +36,7 @@
         				</ListBox.ItemTemplate>
         				<ListBox.ItemsPanel>
         					<ItemsPanelTemplate>
-        						<WrapPanel Orientation="Horizontal"
-        							Height="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
-        							Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"/>
+        						<WrapPanel Orientation="Horizontal" />
         					</ItemsPanelTemplate>
         				</ListBox.ItemsPanel>
         			</ListBox>
