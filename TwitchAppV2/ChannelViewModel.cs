@@ -30,6 +30,8 @@ namespace TwitchAppV2
         private string _settingsFile;
         private XmlAttributeOverrides _overrides = new XmlAttributeOverrides();
         private XmlAttributes _attributesToOverride = new XmlAttributes();
+        private bool _refreshingStreams;
+        private bool _reloadingConfig;
 
         public ObservableCollection<ChannelModel> _channels {get; set; }
 
@@ -68,11 +70,18 @@ namespace TwitchAppV2
             }
         }
 
+        private readonly DelegateCommand<object> refreshFavorites;
+        private readonly DelegateCommand<object> reloadConfig;
+
         #endregion
 
         public ChannelViewModel()
         {
 
+            refreshFavorites = new DelegateCommand<object>(RefreshFavorites, CanRefreshFavorites);
+            reloadConfig = new DelegateCommand<object>(ReloadChannelConfig, CanReloadConfig);
+            _refreshingStreams = false;
+            _reloadingConfig = false;
             _channels = new ObservableCollection<ChannelModel>();
             string appPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             _configFile = String.Format("{0}\\TwitchApp.xml", appPath);
@@ -101,12 +110,20 @@ namespace TwitchAppV2
 
         public ICommand RefreshFavoritesCommand
         {
-            get { return new DelegateCommand<object>(RefreshFavorites);  }
+            get { return refreshFavorites; }
+        }
+
+        private bool CanRefreshFavorites(object o)
+        {
+            return _refreshingStreams ? false : true;
         }
 
         private async void RefreshFavorites(object parameter)
         {
-            
+
+            _refreshingStreams = true;
+            refreshFavorites.RaiseCanExecuteChanged();
+            reloadConfig.RaiseCanExecuteChanged();
             foreach (ChannelModel channel in _channels)
             {
 
@@ -165,6 +182,9 @@ namespace TwitchAppV2
 
                 }
             }
+            _refreshingStreams = false;
+            refreshFavorites.RaiseCanExecuteChanged();
+            reloadConfig.RaiseCanExecuteChanged();
         }
 
         public ICommand RunStreamCommand
@@ -229,11 +249,17 @@ namespace TwitchAppV2
 
         public ICommand ReloadChannelConfigCommand
         {
-            get { return new DelegateCommand<object>(ReloadChannelConfig);  }
+            get { return reloadConfig;  }
+        }
+
+        private bool CanReloadConfig(object o)        {
+            return _reloadingConfig || _refreshingStreams ? false : true;
         }
         
         private void ReloadChannelConfig(object paremeter)
         {
+            _reloadingConfig = true;
+            reloadConfig.RaiseCanExecuteChanged();
             if (File.Exists(_configFile))
             {
                 XmlSerializer deserializer = new XmlSerializer(typeof(ObservableCollection<ChannelModel>), _overrides, null, new XmlRootAttribute("Channels"), null);
@@ -293,6 +319,9 @@ namespace TwitchAppV2
             {
                 Settings.LaunchStreamCommandList[0] = @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe";
             }
+
+            _reloadingConfig = false;
+            reloadConfig.RaiseCanExecuteChanged();
         }
     }
 }

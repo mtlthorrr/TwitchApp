@@ -11,10 +11,17 @@ namespace TwitchAppV2
     public class DelegateCommand<T> : ICommand
     {
         private readonly Action<T> _action;
+        private readonly Func<T, bool> _canExecute;
 
         public DelegateCommand(Action<T> action)
+            : this(action, null)
+        {
+        }
+
+        public DelegateCommand(Action<T> action, Func<T, bool> canExecute)
         {
             _action = action;
+            _canExecute = canExecute;
         }
 
         public void Execute(object parameter)
@@ -24,11 +31,20 @@ namespace TwitchAppV2
 
         public bool CanExecute(object parameter)
         {
-            return true;
+            if (_canExecute == null)
+            {
+                return true;
+            }
+            return _canExecute((parameter == null) ? default(T) : (T)Convert.ChangeType(parameter, typeof(T)));
         }
 
-#pragma warning disable 67
         public event EventHandler CanExecuteChanged;
-#pragma warning restore 67
+        public void RaiseCanExecuteChanged()
+        {
+            if (CanExecuteChanged != null)
+            {
+                CanExecuteChanged(this, EventArgs.Empty);
+            }
+        }
     }
 }
