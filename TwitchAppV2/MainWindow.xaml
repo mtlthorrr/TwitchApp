@@ -27,7 +27,7 @@
         							<Label Content="{Binding Name}" VerticalAlignment="Center"/>
                                     <Label Content="{Binding StatusTitle}" VerticalAlignment="Center" />
         							<Image Source="{Binding ChannelPreviewImage}" Height="200" Width="320" Margin="5,5,5,5" Visibility="Visible" />
-                                    <ComboBox  ItemsSource="{Binding Streams}" DisplayMemberPath="Quality" SelectedValuePath="Url" SelectedValue="{Binding  RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.SelectedStream}"  HorizontalAlignment="Center" Width="150"/>
+                                    <ComboBox  ItemsSource="{Binding Streams}" DisplayMemberPath="Quality" SelectedValue="{Binding SelectedStream}"  HorizontalAlignment="Center" Width="150" SelectedIndex="0"/>
                                     <TextBlock Text="Request Status:" />
                                     <TextBlock Text="{Binding RequestError}" />
                                     <Button x:Name="btnRunSelectedStream" Content="Open Stream" Command="{Binding  RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.RunStreamCommand}" CommandParameter="{Binding}"/>

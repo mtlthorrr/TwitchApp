@@ -30,6 +30,7 @@ namespace TwitchAppV2
         private string _requestError;
         private ChannelService _channelType;
         private string _statusTitle;
+        private Stream _selectedStream;
 
         public ObservableCollection<Stream> Streams { get; set; }
         
@@ -164,6 +165,21 @@ namespace TwitchAppV2
                 
             }
         }
+
+        
+        public Stream SelectedStream
+        {
+            get { return _selectedStream; }
+            set 
+            { 
+                if (value != _selectedStream)
+                {
+                    _selectedStream = value;
+                    RaisePropertyChangedEvent("SelectedStream");
+                }
+            }
+        }
+        
         
 
         #endregion
