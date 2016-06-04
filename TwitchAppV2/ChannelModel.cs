@@ -29,6 +29,7 @@ namespace TwitchAppV2
         private BitmapImage _channelPreviewImage;
         private string _requestError;
         private ChannelService _channelType;
+        private string _statusTitle;
 
         public ObservableCollection<Stream> Streams { get; set; }
         
@@ -147,6 +148,23 @@ namespace TwitchAppV2
 
             }
         }
+
+        
+
+        public string StatusTitle
+        {
+            get { return _statusTitle; }
+            set 
+            {
+                if (value != _statusTitle)
+                {
+                    _statusTitle = value;
+                    RaisePropertyChangedEvent("StatusTitle");
+                }
+                
+            }
+        }
+        
 
         #endregion
 
