@@ -15,6 +15,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Diagnostics; // For Process
 using System.Windows.Threading;
+using System.ComponentModel;
 
 
 
@@ -73,6 +74,7 @@ namespace TwitchAppV2
 
         private readonly DelegateCommand<object> refreshFavorites;
         private readonly DelegateCommand<object> reloadConfig;
+        private readonly DelegateCommand<ChannelModel> runStream;
 
         #endregion
 
@@ -81,6 +83,7 @@ namespace TwitchAppV2
 
             refreshFavorites = new DelegateCommand<object>(RefreshFavorites, CanRefreshFavorites);
             reloadConfig = new DelegateCommand<object>(ReloadChannelConfig, CanReloadConfig);
+            runStream = new DelegateCommand<ChannelModel>(RunStream, CanRunStream);
             _refreshingStreams = false;
             _reloadingConfig = false;
             _channels = new ObservableCollection<ChannelModel>();
@@ -196,24 +199,17 @@ namespace TwitchAppV2
 
         public ICommand RunStreamCommand
         {
-            get { return new DelegateCommand<ChannelModel>(RunStream); }
+            get { return runStream; }
+        }
+
+        private bool CanRunStream(ChannelModel channel)
+        {
+            return channel.SelectedStream == null ? false : true;
         }
 
         private void RunStream(ChannelModel parameter)
         {
-            if (parameter.Streams.Count == 0)
-            {
-                MessageBox.Show("Channel has no active streams");
-                return;
-            }
-
-            if (SelectedStream == null || SelectedStream == "")
-            {
-                MessageBox.Show("Please select a strem quality");
-                return;
-            }
-
-            Process.Start(Settings.LaunchStreamCommandList[0], SelectedStream);
+            Process.Start(Settings.LaunchStreamCommandList[0], parameter.SelectedStream.Url);
         }
 
         private BitmapImage GetChannelPreview(string url)
@@ -280,6 +276,7 @@ namespace TwitchAppV2
                         foreach (ChannelModel channel in channelBuffer)
                         {
                             _channels.Add(channel);
+                            channel.PropertyChanged += channel_PropertyChanged;
                         }
                     }
 
@@ -329,6 +326,14 @@ namespace TwitchAppV2
 
             _reloadingConfig = false;
             reloadConfig.RaiseCanExecuteChanged();
+        }
+
+        private void channel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SelectedStream")
+            {
+                runStream.RaiseCanExecuteChanged();
+            }
         }
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
