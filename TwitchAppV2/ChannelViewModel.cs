@@ -154,10 +154,25 @@ namespace TwitchAppV2
                                 var channelAvailableStreams = await TwitchLib.UsherRequest(String.Format("api/channel/hls/{0}.json?sig={1}&token={2}&allow_source=true", channel.Name, channel.ChannelToken._Sig, channel.ChannelToken._Token), "select");
 
                                 List<string> m3u = new List<string>(Regex.Split(channelAvailableStreams, "\n"));
-
                                 ParseM3U parser = new ParseM3U();
+                                Stream currentSelectedStream = channel.SelectedStream;
                                 channel.Streams.Clear();
                                 parser.Parse(m3u, channel.Streams);
+                                
+                                if (channel.Streams.Count > 0 && currentSelectedStream != null)
+                                {
+                                    var result = channel.Streams.FirstOrDefault(P => P.Quality == currentSelectedStream.Quality);
+                                    if (result != null)
+                                    {
+                                        channel.SelectedStream = result;
+                                    }
+
+                                    else
+                                    {
+                                        channel.SelectedStream = channel.Streams[0];
+                                    }
+                                    
+                                }
                             }
 
                             else
