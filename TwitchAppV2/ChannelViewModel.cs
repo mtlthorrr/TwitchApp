@@ -336,7 +336,10 @@ namespace TwitchAppV2
 
             else
             {
-                Settings.LaunchStreamCommandList[0] = @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe";
+                Settings.LaunchStreamCommandList = new ObservableCollection<string>()
+                {
+                    @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe",
+                };
             }
 
             _reloadingConfig = false;
