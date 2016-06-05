@@ -1,17 +1,15 @@
 <Channels>
 <ChannelModel>
-	<Name></Name>
-	<DisplayName></DisplayName>
-	<Game></Game>
-	<ChannelType></ChannelType>
+	<Name>dotamajor</Name>
+	<DisplayName>DotaMajor</DisplayName>
+	<Game>Dota2</Game>
+	<ChannelType>Twitch</ChannelType>
 </ChannelModel>
-
 
 <ChannelModel>
-	<Name></Name>
-	<DisplayName></DisplayName>
-	<Game></Game>
-	<ChannelType></ChannelType>
+	<Name>dotamajor2</Name>
+	<DisplayName>DotsMajor2</DisplayName>
+	<Game>Dota2</Game>
+	<ChannelType>Twitch</ChannelType>
 </ChannelModel>
-
 </Channels>

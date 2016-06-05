@@ -1,0 +1,6 @@
+<Settings>
+	<LaunchStreamCommandList>
+		<StreamCommand>C:\Program Files\MPC-HC\mpc-hc64.exe</StreamCommand>
+		<StreamCommand>C:\Program Files (x86)\VideoLAN\VLC\vlc.exe</StreamCommand>
+	</LaunchStreamCommandList>
+</Settings>
