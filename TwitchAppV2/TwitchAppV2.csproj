@@ -72,11 +72,19 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ChannelViewModel.cs" />
+    <Compile Include="FavoritesView.xaml.cs">
+      <DependentUpon>FavoritesView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MlgLib.cs" />
     <Compile Include="ParseM3U.cs" />
+    <Compile Include="SampleData\ChannelModelSample.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Stream.cs" />
     <Compile Include="TwitchLib.cs" />
+    <Page Include="FavoritesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

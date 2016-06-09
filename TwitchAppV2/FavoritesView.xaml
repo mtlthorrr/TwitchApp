@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="TwitchAppV2.FavoritesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:fav="clr-namespace:TwitchAppV2"
+             xmlns:sample="clr-namespace:TwitchAppV2.SampleData"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="700"
+             d:DataContext="{d:DesignInstance Type=sample:ChannelModelSample, IsDesignTimeCreatable=True}">
+    <UserControl.DataContext>
+        <fav:ChannelViewModel />
+    </UserControl.DataContext>
+    <Grid ShowGridLines="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Menu Grid.Column="0" Grid.Row="0">
+            <MenuItem Header="Refresh Favorites" Command="{Binding RefreshFavoritesCommand}" Margin="0,10" HorizontalAlignment="Center"></MenuItem>
+            <MenuItem Header="Reload Channel Config" Command="{Binding ReloadChannelConfigCommand}" Margin="0,10"></MenuItem>
+        </Menu>
+        <ListBox Grid.Row="1" x:Name="FavoriteChannels" ItemsSource="{Binding _channels}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Channel: "  VerticalAlignment="Center"/>
+                            <Label Content="{Binding Name}" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Stream Title: " VerticalAlignment="Center" />
+                            <Label Content="{Binding StatusTitle}" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <Image Source="{Binding ChannelPreviewImage}" Height="200" Width="320" Margin="5,5,5,5" />
+                        <ComboBox ItemsSource="{Binding Streams}" DisplayMemberPath="Quality" SelectedValue="{Binding SelectedStream}" SelectedIndex="0" HorizontalAlignment="Center"/>
+                        <Button x:Name="btnRunSelectedStream" Content="Open Stream" Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type  fav:FavoritesView}}, Path=DataContext.RunStreamCommand}" CommandParameter="{Binding}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+    </Grid>
+</UserControl>
